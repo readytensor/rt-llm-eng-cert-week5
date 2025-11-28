@@ -1,0 +1,27 @@
+# Evaluation toggles
+enable_benchmarks: true
+enable_domain: true
+enable_operational: true
+
+# Benchmark settings
+mmlu_samples: 33
+mmlu_subjects:
+  - high_school_psychology
+  - logical_fallacies
+  - moral_disputes
+
+hellaswag_samples: 100
+
+# Domain evaluation - SAMSum
+samsum_dataset_path: data/datasets/knkarthick_samsum
+samsum_split: test
+samsum_samples: 100 # NEW - number of samples to evaluate
+
+# Operational checks
+max_summary_length: 150
+min_summary_length: 10
+
+# Generation settings
+max_new_tokens: 200
+temperature: 0.7
+do_sample: false
