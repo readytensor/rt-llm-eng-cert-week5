@@ -33,7 +33,7 @@ def load_model(model_path, model_type="lora", base_model=None):
         print(f"Loading base model: {base_model}")
         model = AutoModelForCausalLM.from_pretrained(
             base_model,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             device_map="auto"
         )
         
@@ -47,7 +47,7 @@ def load_model(model_path, model_type="lora", base_model=None):
         print(f"Loading full model from: {model_path}")
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             device_map="auto"
         )
         tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -55,7 +55,7 @@ def load_model(model_path, model_type="lora", base_model=None):
     return model, tokenizer
 
 
-def save_results(results, model_path, output_dir=None):
+def save_results(results, model_path, output_dir=None, suffix="", output_name=None):
     """
     Save evaluation results to JSON file.
     
@@ -63,17 +63,33 @@ def save_results(results, model_path, output_dir=None):
         results: Dictionary of evaluation results
         model_path: Path to evaluated model
         output_dir: Optional custom output directory
+        suffix: Optional suffix for filename (e.g., "benchmarks", "domain", "final")
+        output_name: Optional custom name for output directory
     """
     if output_dir is None:
-        # Save in the model's output directory
-        model_name = Path(model_path).parts[-2]  # Get parent folder name
-        output_dir = Path(f"data/outputs/{model_name}/eval_results")
+        if output_name:
+            # Use custom output name
+            output_dir = Path(f"data/outputs/{output_name}/eval_results")
+        else:
+            # Get the parent directory of the model (e.g., data/outputs/baseline_qlora)
+            model_path = Path(model_path)
+            if model_path.name in ['lora_adapters', 'final_model']:
+                # If path ends with lora_adapters or final_model, go up one level
+                model_dir = model_path.parent
+            else:
+                model_dir = model_path
+            
+            output_dir = model_dir / "eval_results"
     
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = output_dir / f"eval_{timestamp}.json"
+    
+    if suffix:
+        output_file = output_dir / f"eval_{suffix}_{timestamp}.json"
+    else:
+        output_file = output_dir / f"eval_{timestamp}.json"
     
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2)

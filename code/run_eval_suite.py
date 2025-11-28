@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--model_type", type=str, choices=["lora", "full"], default="lora", help="Model type")
     parser.add_argument("--base_model", type=str, default="meta-llama/Llama-3.2-1B-Instruct", help="Base model for LoRA")
     parser.add_argument("--config", type=str, default="config/eval_config.yaml", help="Path to config file")
+    parser.add_argument("--output_name", type=str, default=None, help="Custom name for output directory (optional)")
     
     args = parser.parse_args()
     
@@ -44,7 +45,7 @@ def main():
     if config.get('enable_benchmarks', False):
         results['benchmarks'] = evaluate_benchmarks(model, tokenizer, config)
         # Save intermediate results
-        save_results(results, args.model_path, suffix="benchmarks")
+        save_results(results, args.model_path, suffix="benchmarks", output_name=args.output_name)
     
     # Run domain evaluation
     summaries = None
@@ -52,7 +53,7 @@ def main():
         domain_results, summaries = evaluate_domain(model, tokenizer, config)
         results['domain'] = domain_results
         # Save intermediate results
-        save_results(results, args.model_path, suffix="domain")
+        save_results(results, args.model_path, suffix="domain", output_name=args.output_name)
     
     # Run operational checks
     if config.get('enable_operational', False) and summaries:
@@ -66,7 +67,7 @@ def main():
     format_results(results)
     
     # Save final complete results
-    save_results(results, args.model_path, suffix="final")
+    save_results(results, args.model_path, suffix="final", output_name=args.output_name)
 
 
 if __name__ == "__main__":

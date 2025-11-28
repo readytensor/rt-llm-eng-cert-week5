@@ -4,8 +4,7 @@ Domain evaluation for SAMSum summarization task using ROUGE scores.
 
 from datasets import load_from_disk
 import evaluate
-from transformers import pipeline
-from tqdm import tqdm
+
 
 def generate_predictions(
     model,
@@ -27,6 +26,13 @@ def generate_predictions(
     Returns:
         list[str]: Generated summaries
     """
+    from transformers import pipeline
+    from tqdm import tqdm
+
+    # Set pad_token if not already set
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
     # Prepare prompts
     prompts = []
     for sample in dataset:
@@ -101,10 +107,15 @@ def evaluate_domain(model, tokenizer, config):
     dataset = load_from_disk(dataset_path)
     test_data = dataset[split]
     
-    print(f"Loaded {len(test_data)} examples from {split} split")
+    # Limit samples if specified
+    num_samples = config.get('samsum_samples', len(test_data))
+    if num_samples < len(test_data):
+        test_data = test_data.select(range(num_samples))
+    
+    print(f"Evaluating on {len(test_data)} samples from {split} split")
     
     # Task instruction
-    task_instruction = "You are a helpful assistant who writes concise, factual summaries of conversations. Summarize the following conversation into a single sentence."
+    task_instruction = "Summarize the following conversation in a concise manner."
     
     # Generate predictions
     predictions = generate_predictions(

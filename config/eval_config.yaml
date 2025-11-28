@@ -1,7 +1,7 @@
 # Evaluation toggles
-enable_benchmarks: true
+enable_benchmarks: false
 enable_domain: true
-enable_operational: true
+enable_operational: false
 
 # Benchmark settings
 mmlu_samples: 33
