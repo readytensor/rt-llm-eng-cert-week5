@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-11-27T18:54:42.005713",
+  "model_path": "data/outputs/baseline_qlora/lora_adapters",
+  "model_type": "lora",
+  "base_model": "meta-llama/Llama-3.2-1B-Instruct",
+  "operational": {
+    "length_pass_rate": 0.79,
+    "violations": {
+      "too_long": 0,
+      "too_short": 21
+    },
+    "total_samples": 100
+  }
+}

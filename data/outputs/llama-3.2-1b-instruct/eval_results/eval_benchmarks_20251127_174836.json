@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-27T17:38:42.344166",
+  "model_path": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_type": "full",
+  "base_model": null,
+  "benchmarks": {
+    "mmlu": {
+      "accuracy": 0.494949494949495,
+      "samples": 99,
+      "subjects": [
+        "high_school_psychology",
+        "logical_fallacies",
+        "moral_disputes"
+      ]
+    },
+    "hellaswag": {
+      "accuracy_norm": 0.62,
+      "samples": 100
+    }
+  }
+}

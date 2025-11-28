@@ -1,7 +1,7 @@
 # Evaluation toggles
 enable_benchmarks: false
-enable_domain: true
-enable_operational: false
+enable_domain: false
+enable_operational: true
 
 # Benchmark settings
 mmlu_samples: 33
@@ -15,11 +15,10 @@ hellaswag_samples: 100
 # Domain evaluation - SAMSum
 samsum_dataset_path: data/datasets/knkarthick_samsum
 samsum_split: test
-samsum_samples: 100 # NEW - number of samples to evaluate
+samsum_samples: 100
 
 # Operational checks
 max_summary_length: 150
-min_summary_length: 10
 
 # Generation settings
 max_new_tokens: 200

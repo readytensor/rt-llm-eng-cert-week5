@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-11-27T17:25:24.702002",
+  "model_path": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_type": "full",
+  "base_model": null,
+  "domain": {
+    "rouge1": 0.3416851507304933,
+    "rouge2": 0.11138327792676844,
+    "rougeL": 0.2569544743687364,
+    "samples": 100
+  }
+}

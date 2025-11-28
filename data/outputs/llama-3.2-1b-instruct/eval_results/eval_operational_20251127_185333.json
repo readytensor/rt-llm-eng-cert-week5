@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-11-27T18:41:52.898049",
+  "model_path": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_type": "full",
+  "base_model": null,
+  "operational": {
+    "length_pass_rate": 1.0,
+    "violations": {
+      "too_long": 0,
+      "too_short": 0
+    },
+    "total_samples": 100
+  }
+}
