@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-11-27T17:08:35.118125",
+  "model_path": "data/outputs/baseline_qlora/lora_adapters",
+  "model_type": "lora",
+  "base_model": "meta-llama/Llama-3.2-1B-Instruct",
+  "domain": {
+    "rouge1": 0.46329069203439255,
+    "rouge2": 0.20674349596177222,
+    "rougeL": 0.38494471778941886,
+    "samples": 100
+  },
+  "duration_minutes": 8.021549538771312
+}

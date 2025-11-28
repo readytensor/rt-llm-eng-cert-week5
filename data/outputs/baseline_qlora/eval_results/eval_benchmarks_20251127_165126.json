@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-27T16:41:32.499278",
+  "model_path": "data/outputs/baseline_qlora/lora_adapters",
+  "model_type": "lora",
+  "base_model": "meta-llama/Llama-3.2-1B-Instruct",
+  "benchmarks": {
+    "mmlu": {
+      "accuracy": 0.47474747474747475,
+      "samples": 99,
+      "subjects": [
+        "high_school_psychology",
+        "logical_fallacies",
+        "moral_disputes"
+      ]
+    },
+    "hellaswag": {
+      "accuracy_norm": 0.59,
+      "samples": 100
+    }
+  }
+}
