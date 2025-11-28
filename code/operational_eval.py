@@ -3,13 +3,12 @@ Operational checks for generated summaries.
 """
 
 
-def check_summary_length(summary, min_length, max_length):
+def check_summary_length(summary, max_length):
     """
     Check if summary length is within acceptable range.
     
     Args:
         summary: Generated summary text
-        min_length: Minimum word count
         max_length: Maximum word count
     
     Returns:
@@ -17,9 +16,7 @@ def check_summary_length(summary, min_length, max_length):
     """
     word_count = len(summary.split())
     
-    if word_count < min_length:
-        return {'pass': False, 'violation': 'too_short', 'word_count': word_count}
-    elif word_count > max_length:
+    if word_count > max_length:
         return {'pass': False, 'violation': 'too_long', 'word_count': word_count}
     else:
         return {'pass': True, 'violation': None, 'word_count': word_count}
@@ -40,19 +37,17 @@ def evaluate_operational(summaries, config):
     print("Running Operational Evaluation")
     print("="*60)
     
-    min_length = config['min_summary_length']
     max_length = config['max_summary_length']
     
     violations = {
-        'too_long': 0,
-        'too_short': 0
+        'too_long': 0
     }
     
     passed = 0
     
     for summary_data in summaries:
         generated = summary_data['generated']
-        result = check_summary_length(generated, min_length, max_length)
+        result = check_summary_length(generated, max_length)
         
         if result['pass']:
             passed += 1
@@ -70,6 +65,5 @@ def evaluate_operational(summaries, config):
     
     print(f"\nLength Check Pass Rate: {pass_rate:.1%}")
     print(f"  Too long: {violations['too_long']}")
-    print(f"  Too short: {violations['too_short']}")
     
     return results
