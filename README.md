@@ -48,7 +48,7 @@ python code/run_eval_suite.py \
 python code/run_eval_suite.py \
     --model_path meta-llama/Llama-3.2-1B-Instruct \
     --model_type full \
-    --output_name llama-3.2-1b-base \
+    --output_name llama-3.2-1B-Instruct \
     --config config/eval_config.yaml
 ```
 
