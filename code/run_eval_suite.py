@@ -56,9 +56,16 @@ def main():
         save_results(results, args.model_path, suffix="domain", output_name=args.output_name)
     
     # Run operational checks
-    if config.get('enable_operational', False) and summaries:
-        results['operational'] = evaluate_operational(summaries, config)
-    
+    if config.get('enable_operational', False):
+        if summaries is None:
+            if not config.get('enable_domain', False):
+                print("\nGenerating summaries for operational checks...")
+                _, summaries = evaluate_domain(model, tokenizer, config)
+        
+        if summaries:
+            results['operational'] = evaluate_operational(summaries, config)
+            save_results(results, args.model_path, suffix="operational", output_name=args.output_name)
+
     # Calculate duration
     duration = (time.time() - start_time) / 60
     results['duration_minutes'] = duration
