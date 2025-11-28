@@ -1,309 +1,93 @@
-# Week 3: Fine-Tuning LLMs
+# LLM Evaluation Suite
 
-**LLM Engineering and Development Certification Program**
+**Week 5: LLM Testing & Evaluation**  
+Part of the LLM Engineering & Deployment Certification Program
 
-This repository contains code and materials for Week 3, where we learn to fine-tune large language models and measure improvements over baseline performance.
+A comprehensive evaluation framework for testing fine-tuned language models using benchmarks, domain metrics, and operational checks.
 
----
+## Overview
 
-## 📚 Week 3 Overview
+This evaluation suite tests three critical aspects of fine-tuned LLMs:
 
-**Goal**: Take a base model, fine-tune it using different approaches, and measure improvement.
+1. **Benchmarks** - Tests for catastrophic forgetting using MMLU and HellaSwag
+2. **Domain Performance** - Evaluates task-specific quality using ROUGE scores on SAMSum
+3. **Operational Checks** - Validates output length and other production requirements
 
-### Lessons Covered
+## Quick Start
 
-- **Lesson 1**: Dataset Selection & Baseline Evaluation
-- **Lesson 2**: Fine-Tuning Frontier LLMs (OpenAI)
-- **Lesson 3**: End-to-End LoRA Fine-Tuning
-- **Lesson 4**: Experiment Tracking & Reproducibility (W&B) _(Grid search - in progress)_
-- **Lessons 5-8**: Advanced topics _(coming soon)_
-
----
-
-## 🏗️ Repository Structure
-
-```
-.
-├── code/
-│   ├── config.yaml                    # Main configuration file
-│   ├── paths.py                       # Centralized path management
-│   │
-│   ├── evaluate_baseline.py           # Lesson 1: Baseline evaluation
-│   ├── train_lora.py                  # Lesson 3: LoRA fine-tuning
-│   ├── evaluate_lora.py               # Lesson 3: Evaluate fine-tuned model
-│   │
-│   ├── openai_workflow.py             # Lesson 2: OpenAI workflow controller
-│   ├── openai_workflows/              # Lesson 2: OpenAI fine-tuning scripts
-│   │   ├── prepare_openai_jsonl.py
-│   │   ├── openai_finetune_runner.py
-│   │   └── evaluate_openai.py
-│   │
-│   ├── run_grid_search.py             # Lesson 4: Grid search (WIP)
-│   │
-│   └── utils/                         # Shared utilities
-│       ├── config_utils.py            # Config loading
-│       ├── data_utils.py              # Dataset loading & preprocessing
-│       ├── model_utils.py             # Model setup & management
-│       └── inference_utils.py         # Generation & evaluation
-│
-├── data/
-│   ├── datasets/                      # Cached HuggingFace datasets
-│   ├── outputs/                       # All evaluation results
-│   │   ├── baseline/                  # Lesson 1 results
-│   │   ├── lora_samsum/              # Lesson 3 results
-│   │   └── openai/                   # Lesson 2 results
-│   └── experiments/                   # OpenAI fine-tuning artifacts
-│
-├── requirements.txt                   # Python dependencies
-└── README.md                          # This file
-```
-
----
-
-## ⚙️ Setup
-
-### 1. Create Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 2. Install Dependencies
+### Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure Environment Variables
-
-Create a `.env` file in the root directory:
+### Run Evaluation
 
 ```bash
-# For OpenAI fine-tuning (Lesson 2)
-OPENAI_API_KEY=your_openai_api_key_here
-
-# For Weights & Biases tracking (Lesson 4)
-WANDB_API_KEY=your_wandb_api_key_here
-
-# Optional: For Hugging Face model uploads
-HF_TOKEN=your_huggingface_token_here
+python code/run_eval_suite.py \
+    --model_path data/outputs/baseline_qlora/lora_adapters \
+    --model_type lora \
+    --base_model meta-llama/Llama-3.2-1B-Instruct \
+    --config config/eval_config.yaml
 ```
 
-### 4. Review Configuration
-
-Edit `code/config.yaml` to customize:
-
-- Base model (default: `meta-llama/Llama-3.2-1B-Instruct`)
-- Dataset (default: `knkarthick/samsum`)
-- Training hyperparameters
-- LoRA configuration
-
----
-
-## 🚀 Usage
-
-### **Lesson 1: Baseline Evaluation**
-
-Evaluate the base model (no fine-tuning) to establish baseline performance.
+For full fine-tuned models:
 
 ```bash
-cd code
-python evaluate_baseline.py
+python code/run_eval_suite.py \
+    --model_path data/outputs/your_model/final_model \
+    --model_type full
 ```
 
-**Output**:
+## Configuration
 
-- Results saved to `data/outputs/baseline/eval_results.json`
-- Predictions saved to `data/outputs/baseline/predictions.jsonl`
+Edit `config/eval_config.yaml` to customize:
 
-**Expected ROUGE-1**: ~34% (on SAMSum dataset)
+- Enable/disable evaluation types
+- Set number of samples per benchmark
+- Configure MMLU subjects
+- Adjust operational thresholds
+- Modify generation parameters
 
----
+## Output
 
-### **Lesson 2: Fine-Tuning Frontier LLMs (OpenAI)**
+Results are saved to `data/outputs/{model_name}/eval_results/`:
 
-Complete workflow for fine-tuning OpenAI models like GPT-4o-mini.
+- `eval_benchmarks_*.json` - Benchmark results (MMLU, HellaSwag)
+- `eval_domain_*.json` - Domain evaluation (SAMSum ROUGE scores)
+- `eval_final_*.json` - Complete evaluation results
 
-#### Interactive Workflow
+## Project Structure
 
-```bash
-cd code
-python openai_workflow.py
+```
+├── code/
+│   ├── run_eval_suite.py      # Main evaluation script
+│   ├── benchmark_eval.py      # MMLU & HellaSwag evaluation
+│   ├── domain_eval.py         # SAMSum ROUGE evaluation
+│   ├── operational_eval.py    # Length checks & operational tests
+│   └── utils.py               # Model loading & result utilities
+├── config/
+│   └── eval_config.yaml       # Evaluation configuration
+├── data/
+│   ├── datasets/              # Evaluation datasets
+│   └── outputs/               # Model outputs & results
+└── requirements.txt           # Dependencies
 ```
 
-This launches an interactive menu:
+## Requirements
 
-1. Prepare dataset for fine-tuning
-2. Run fine-tuning job
-3. Evaluate base or fine-tuned model
-4. Exit
+- Python 3.8+
+- CUDA-compatible GPU (recommended)
+- ~10GB VRAM for 1B models, more for larger models
 
-#### Or Run Individual Steps
+## License
 
-**Step 1: Prepare Data**
+This work is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-```bash
-python openai_workflows/prepare_openai_jsonl.py
-```
+**You are free to:**
 
-**Step 2: Create Fine-Tuning Job**
+- Share and adapt this material for non-commercial purposes
+- Must give appropriate credit and indicate changes made
+- Must distribute adaptations under the same license
 
-```bash
-python openai_workflows/openai_finetune_runner.py
-```
-
-This will:
-
-- Upload training/validation files
-- Create fine-tuning job
-- Monitor progress until completion
-- Save fine-tuned model ID
-
-**Step 3: Evaluate Base Model**
-
-```bash
-python openai_workflows/evaluate_openai.py --model gpt-4o-mini
-```
-
-**Step 4: Evaluate Fine-Tuned Model**
-
-```bash
-python openai_workflows/evaluate_openai.py --model ft:gpt-4o-mini-2024-07-18:your-org:model-name:job-id
-```
-
-**Output**:
-
-- Results saved to `data/outputs/openai/{model_name}/`
-
----
-
-### **Lesson 3: End-to-End LoRA Fine-Tuning**
-
-Fine-tune Llama using QLoRA (4-bit quantization + LoRA adapters).
-
-#### Step 1: Train Model
-
-```bash
-cd code
-python train_lora.py
-```
-
-**What happens**:
-
-- Loads base model with 4-bit quantization
-- Applies LoRA adapters to attention layers
-- Fine-tunes on SAMSum dataset
-- Logs metrics to Weights & Biases
-- Saves adapters to `data/outputs/lora_samsum/lora_adapters/`
-
-**Training time**: ~15-20 minutes on a single GPU (RTX 3090 / A100)
-
-#### Step 2: Evaluate Fine-Tuned Model
-
-```bash
-python evaluate_lora.py
-```
-
-**Output**:
-
-- Results saved to `data/outputs/lora_samsum/eval_results.json`
-- Predictions saved to `data/outputs/lora_samsum/predictions.jsonl`
-
-**Expected improvement**: ROUGE-1 should increase by ~5-10% over baseline
-
----
-
-## 🔧 Configuration
-
-All configuration is centralized in `code/config.yaml`:
-
-### Change the Base Model
-
-```yaml
-base_model: meta-llama/Llama-3.2-3B-Instruct # or any HF model
-```
-
-### Change the Dataset
-
-```yaml
-datasets:
-  - path: your-org/your-dataset
-    cache_dir: ../data/datasets
-    field_map:
-      input: dialogue # Your input field name
-      output: summary # Your output field name
-    type: completion
-```
-
-### Adjust Training Hyperparameters
-
-```yaml
-num_epochs: 3
-learning_rate: 2e-4
-batch_size: 4
-gradient_accumulation_steps: 4
-```
-
-### Modify LoRA Configuration
-
-```yaml
-lora_r: 8 # Rank (higher = more parameters)
-lora_alpha: 16 # Scaling factor
-lora_dropout: 0.1
-target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]
-```
-
----
-
-## 📊 Results Comparison
-
-After completing lessons 1-3, compare results:
-
-| Model                                 | ROUGE-1 | ROUGE-2 | ROUGE-L |
-| ------------------------------------- | ------- | ------- | ------- |
-| **Baseline** (Lesson 1)               | ~34%    | ~12%    | ~27%    |
-| **OpenAI GPT-4o-mini** (Lesson 2)     | ~41%    | ~16%    | ~32%    |
-| **Fine-tuned GPT-4o-mini** (Lesson 2) | ~53%    | ~28%    | ~45%    |
-| **Fine-tuned Llama LoRA** (Lesson 3)  | TBD     | TBD     | TBD     |
-
-_Run each lesson to populate your own results!_
-
----
-
-## 🧪 Lesson 4: Grid Search (Work in Progress)
-
-```bash
-# Note: This script is not yet verified
-python run_grid_search.py
-```
-
-This will:
-
-- Systematically test different LoRA hyperparameters
-- Log all experiments to Weights & Biases
-- Save results for comparison
-
----
-
-## 🤝 Contributing
-
-This is an educational repository. Feel free to:
-
-- Open issues for bugs or questions
-- Submit PRs for improvements
-- Share your fine-tuning results!
-
----
-
-## 📄 License
-
-This project is licensed under the CC BY-NC-SA 4.0 License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-**Ready Tensor, Inc.**
-
-- Email: contact at readytensor dot com
-- Issues & Contributions: Open an issue or pull request on this repository
-- Website: [Ready Tensor](https://readytensor.ai)
+See [LICENSE](LICENSE) for full terms.
